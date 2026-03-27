@@ -1,0 +1,8 @@
+<Solution>
+  <StartupProjects>
+    <Project Path="WebApi/WebApi.csproj" />
+  </StartupProjects>
+  <Project Path="ApiGateway/ApiGateway.csproj" />
+  <Project Path="WebApi1/WebApi1.csproj" Id="abc1e9a9-cbb4-4250-9014-f3ada922df2b" />
+  <Project Path="WebApi2/WebApi2.csproj" Id="e7faec38-4ed2-4bde-83dc-51d7a9ec9943" />
+</Solution>
