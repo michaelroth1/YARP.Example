@@ -1,47 +1,47 @@
 # YARP.Example
 
-Dieses Projekt demonstriert die Verwendung von **YARP (Yet Another Reverse Proxy)** als API Gateway für .NET 10 Anwendungen.
+This project demonstrates the use of **YARP (Yet Another Reverse Proxy)** as an API Gateway for .NET 10 applications.
 
-## 📋 Projektübersicht
+## 📋 Project Overview
 
-Das Beispiel besteht aus drei ASP.NET Core Projekten:
+The example consists of three ASP.NET Core projects:
 
-- **ApiGateway**: YARP Reverse Proxy, der als zentraler Einstiegspunkt fungiert
-- **WebApi1**: Backend-API auf Port 7001 (HTTPS) / 5001 (HTTP)
-- **WebApi2**: Backend-API auf Port 7106 (HTTPS) / 5106 (HTTP)
+- **ApiGateway**: YARP Reverse Proxy acting as the central entry point
+- **WebApi1**: Backend API on port 7001 (HTTPS) / 5001 (HTTP)
+- **WebApi2**: Backend API on port 7106 (HTTPS) / 5106 (HTTP)
 
-## 🚀 Was macht YARP?
+## 🚀 What Does YARP Do?
 
-**YARP (Yet Another Reverse Proxy)** ist ein hochleistungsfähiger, konfigurierbarer Reverse Proxy von Microsoft für .NET. In diesem Beispiel:
+**YARP (Yet Another Reverse Proxy)** is a high-performance, configurable reverse proxy from Microsoft for .NET. In this example:
 
-### Routing-Konfiguration
+### Routing Configuration
 
-Das ApiGateway leitet Anfragen basierend auf URL-Pfaden an die entsprechenden Backend-Services weiter:
+The ApiGateway forwards requests based on URL paths to the corresponding backend services:
 
-- **`/WebApi1/**`** → wird zu WebApi1 (`https://localhost:7001`) weitergeleitet
-- **`/WebApi2/**`** → wird zu WebApi2 (`https://localhost:7106`) weitergeleitet
+- **`/WebApi1/**`** → routed to WebApi1 (`https://localhost:7001`)
+- **`/WebApi2/**`** → routed to WebApi2 (`https://localhost:7106`)
 
 ### Path Transformation
 
-YARP entfernt automatisch den Pfad-Präfix, bevor die Anfrage an den Backend-Service weitergeleitet wird:
+YARP automatically removes the path prefix before forwarding the request to the backend service:
 
 ```
-Anfrage: https://localhost:7170/WebApi1/api/values
+Request: https://localhost:7170/WebApi1/api/values
    ↓
-Weitergeleitet an: https://localhost:7001/api/values
+Forwarded to: https://localhost:7001/api/values
 ```
 
-### Vorteile
+### Benefits
 
-- ✅ **Zentraler Einstiegspunkt**: Ein Gateway für alle Backend-APIs
-- ✅ **Flexible Konfiguration**: Routing über `appsettings.json`
-- ✅ **Load Balancing**: Unterstützung für mehrere Destinations pro Cluster
-- ✅ **Transformationen**: URL-Rewriting, Header-Manipulation, etc.
-- ✅ **Hot Reload**: Änderungen in der Konfiguration werden ohne Neustart übernommen
+- ✅ **Single Entry Point**: One gateway for all backend APIs
+- ✅ **Flexible Configuration**: Routing via `appsettings.json`
+- ✅ **Load Balancing**: Support for multiple destinations per cluster
+- ✅ **Transformations**: URL rewriting, header manipulation, etc.
+- ✅ **Hot Reload**: Configuration changes apply without restart
 
-## 🛠️ Starten des Projekts
+## 🛠️ Starting the Project
 
-### Alle Services starten
+### Start All Services
 
 ```bash
 # Terminal 1: ApiGateway
@@ -57,50 +57,50 @@ cd WebApi2
 dotnet run
 ```
 
-### Zugriff auf die APIs
+### Accessing the APIs
 
-**Über das API Gateway:**
+**Via API Gateway:**
 - WebApi1 Swagger: https://localhost:7170/WebApi1/swagger
 - WebApi2 Swagger: https://localhost:7170/WebApi2/swagger
 
-**Direkter Zugriff:**
+**Direct Access:**
 - WebApi1 Swagger: https://localhost:7001/swagger
 - WebApi2 Swagger: https://localhost:7106/swagger
 
-## ⚠️ Wichtig: SwaggerUI mit YARP
+## ⚠️ Important: SwaggerUI with YARP
 
-### Problem mit absoluten Pfaden
+### Problem with Absolute Paths
 
-Wenn SwaggerUI hinter einem Reverse Proxy wie YARP läuft, muss die Swagger-Endpunkt-Konfiguration **relative Pfade** verwenden, sonst funktioniert die UI nicht korrekt.
+When SwaggerUI runs behind a reverse proxy like YARP, the Swagger endpoint configuration must use **relative paths**, otherwise the UI will not work correctly.
 
-### ❌ Falsch (Standard-Konfiguration)
+### ❌ Wrong (Default Configuration)
 
 ```csharp
-app.UseSwaggerUI(); // Verwendet absoluten Pfad: /swagger/v1/swagger.json
+app.UseSwaggerUI(); // Uses absolute path: /swagger/v1/swagger.json
 ```
 
-Dies funktioniert nicht, wenn die API über das Gateway aufgerufen wird, da YARP die Anfrage an `/swagger/v1/swagger.json` nicht korrekt weiterleitet.
+This doesn't work when the API is accessed via the gateway because YARP cannot correctly forward the request to `/swagger/v1/swagger.json`.
 
-### ✅ Richtig (Relative Pfade)
+### ✅ Correct (Relative Paths)
 
 ```csharp
 app.UseSwaggerUI(options =>
 {
-    // Verwende relative Pfade ohne führenden Slash
+    // Use relative paths without leading slash
     options.SwaggerEndpoint("../swagger/v1/swagger.json", "API V1");
 });
 ```
 
-**Warum ist das wichtig?**
-- Der Browser löst relative Pfade basierend auf der aktuellen URL auf
-- Bei `/WebApi1/swagger` wird `../swagger/v1/swagger.json` zu `/WebApi1/swagger/v1/swagger.json`
-- YARP kann diese Anfrage korrekt an den Backend-Service weiterleiten
+**Why is this important?**
+- The browser resolves relative paths based on the current URL
+- At `/WebApi1/swagger`, `../swagger/v1/swagger.json` becomes `/WebApi1/swagger/v1/swagger.json`
+- YARP can correctly forward this request to the backend service
 
-### Konfiguration in diesem Projekt
+### Configuration in This Project
 
-Beide Backend-APIs (WebApi1 und WebApi2) sind bereits mit relativen Pfaden konfiguriert:
+Both backend APIs (WebApi1 and WebApi2) are already configured with relative paths:
 
-**WebApi1/Program.cs** und **WebApi2/Program.cs**:
+**WebApi1/Program.cs** and **WebApi2/Program.cs**:
 ```csharp
 app.UseSwaggerUI(options =>
 {
@@ -108,15 +108,15 @@ app.UseSwaggerUI(options =>
 });
 ```
 
-## 📦 Verwendete Packages
+## 📦 Used Packages
 
-- **Microsoft.AspNetCore.OpenApi** (10.0.5): OpenAPI-Unterstützung
+- **Microsoft.AspNetCore.OpenApi** (10.0.5): OpenAPI support
 - **Swashbuckle.AspNetCore**: Swagger/OpenAPI UI
-- **Yarp.ReverseProxy**: YARP Reverse Proxy (im ApiGateway)
+- **Yarp.ReverseProxy**: YARP Reverse Proxy (in ApiGateway)
 
-## 🔧 YARP Konfiguration
+## 🔧 YARP Configuration
 
-Die YARP-Konfiguration erfolgt in `ApiGateway/appsettings.json`:
+The YARP configuration is in `ApiGateway/appsettings.json`:
 
 ```json
 {
@@ -145,13 +145,13 @@ Die YARP-Konfiguration erfolgt in `ApiGateway/appsettings.json`:
 }
 ```
 
-## 📚 Weitere Informationen
+## 📚 Further Information
 
 - [YARP Documentation](https://microsoft.github.io/reverse-proxy/)
 - [ASP.NET Core OpenAPI](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/)
 - [Swashbuckle Documentation](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
-## 📝 Technologie-Stack
+## 📝 Technology Stack
 
 - **.NET 10.0**
 - **C# 14.0**
